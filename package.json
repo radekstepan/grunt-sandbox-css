@@ -1,0 +1,8 @@
+{
+    "name": "css-prefix"
+  , "version": "0.0.1"
+  , "private": true
+  , "dependencies": {
+      "parserlib": "latest"
+  }
+}

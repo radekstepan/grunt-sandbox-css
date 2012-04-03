@@ -1,0 +1,4 @@
+/* a test CSS file */
+html { /* not this one */ }
+div, article { display:block; }
+body.clazz { /* not this one */ }
