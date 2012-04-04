@@ -1,0 +1,5 @@
+/* a test CSS file */
+html { ; } /* replace */
+div, article { display:block; } /* prefix */
+body.clazz { font-family:"Helvetica;"; } /* replace */
+html > body, div.html, a, html > div { text-decoration:underline; } /* this one is tricky */
