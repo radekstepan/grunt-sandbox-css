@@ -1,8 +1,6 @@
 parserlib = require "parserlib"
 
 exports.css = (input, text, blacklist=['html', 'body']) ->
-    log '------------------------------'
-
     # Split on new lines.
     lines = input.split "\n"
 
@@ -22,8 +20,6 @@ exports.css = (input, text, blacklist=['html', 'body']) ->
     parser.addListener "startrule", (event) ->
         # Traverse all selectors.
         for selector in event.selectors
-            log selector
-            
             # Where are we? Be 0 indexed.
             position = selector.col - 1
 
@@ -40,26 +36,28 @@ exports.css = (input, text, blacklist=['html', 'body']) ->
                     blacklisted = true
                     el = part.elementName.text
                     p = part.col - 1 + shift
-                    log p, "33"
+
                     # Replace the selector with our own.
-                    log [ "  before", line.join('') ], "32"
                     if p
                         # In the middle of the line?
                         line = line[0..p - 1].concat line[p..].join('').replace(new RegExp(el), text).split('')
                     else
                         line = line.join('').replace(new RegExp(el), text).split('')
-                    log [ "  after ", line.join('') ], "31"
 
             # Prefix with custom text.
             if not blacklisted
-                log [ "  before", line.join('') ], "32"
                 line.splice(position + shift, 0, text + ' ')
-                log [ "  after ", line.join('') ], "31"
                 # Move the line shift.
                 shift += text.length + 1
             
+            # Join up.
+            line = line.join('')
+
+            # Check for `prefix` > `prefix` rules having replace 2 blacklisted rules.
+            line = line.replace(new RegExp(text + " *\> *" + text), text)
+
             # Save the line back.
-            lines[selector.line - 1] = line.join('')
+            lines[selector.line - 1] = line
 
             # Update the line.
             index = selector.line

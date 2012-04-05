@@ -1,8 +1,6 @@
 should = require "should"
 prefix = require "../prefix"
 
-# Multi-line CSS tests.
-
 input =
 """
 /* a test CSS file */

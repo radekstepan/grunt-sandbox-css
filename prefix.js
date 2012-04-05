@@ -7,7 +7,6 @@
   exports.css = function(input, text, blacklist) {
     var index, lines, options, parser, shift;
     if (blacklist == null) blacklist = ['html', 'body'];
-    log('------------------------------');
     lines = input.split("\n");
     options = {
       starHack: true,
@@ -24,7 +23,6 @@
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         selector = _ref[_i];
-        log(selector);
         position = selector.col - 1;
         line = lines[selector.line - 1].split('');
         if (selector.line !== index) shift = 0;
@@ -36,23 +34,20 @@
             blacklisted = true;
             el = part.elementName.text;
             p = part.col - 1 + shift;
-            log(p, "33");
-            log(["  before", line.join('')], "32");
             if (p) {
               line = line.slice(0, (p - 1) + 1 || 9e9).concat(line.slice(p).join('').replace(new RegExp(el), text).split(''));
             } else {
               line = line.join('').replace(new RegExp(el), text).split('');
             }
-            log(["  after ", line.join('')], "31");
           }
         }
         if (!blacklisted) {
-          log(["  before", line.join('')], "32");
           line.splice(position + shift, 0, text + ' ');
-          log(["  after ", line.join('')], "31");
           shift += text.length + 1;
         }
-        lines[selector.line - 1] = line.join('');
+        line = line.join('');
+        line = line.replace(new RegExp(text + " *\> *" + text), text);
+        lines[selector.line - 1] = line;
         _results.push(index = selector.line);
       }
       return _results;
