@@ -7,8 +7,8 @@
 
   input = "/* a test CSS file */\nhtml { ; }\ndiv,\narticle { display:block; }\nbody.clazz { font-family:\"Helvetica;\"; }\ndiv.html,\na,\nhtml > div { text-decoration:underline; }";
 
-  describe("Simple multi-line test", function() {
-    describe("When run with no blacklist against a multi-line input CSS", function() {
+  describe("Multi-line test", function() {
+    describe("when run with no blacklist against a multi-line input CSS", function() {
       var result;
       result = prefix.css(input, '.bootstrap', []);
       return it("should replace all selectors", function() {
@@ -17,7 +17,7 @@
         return result.should.equal(spec);
       });
     });
-    return describe("When run with a blacklist against a multi-line input CSS", function() {
+    return describe("when run with a blacklist against a multi-line input CSS", function() {
       var result;
       result = prefix.css(input, '.bootstrap', ['html', 'body']);
       return it("should replace all not-blacklisted selectors and replace blacklisted with prefixing selector", function() {

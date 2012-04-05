@@ -39,9 +39,15 @@ exports.css = (input, text, blacklist=['html', 'body']) ->
                 if part.elementName?.text in blacklist
                     blacklisted = true
                     el = part.elementName.text
+                    p = part.col - 1 + shift
+                    log p, "33"
                     # Replace the selector with our own.
                     log [ "  before", line.join('') ], "32"
-                    line = line[part.col - 1 + shift..].join('').replace(new RegExp(el), text).split('')
+                    if p
+                        # In the middle of the line?
+                        line = line[0..p - 1].concat line[p..].join('').replace(new RegExp(el), text).split('')
+                    else
+                        line = line.join('').replace(new RegExp(el), text).split('')
                     log [ "  after ", line.join('') ], "31"
 
             # Prefix with custom text.

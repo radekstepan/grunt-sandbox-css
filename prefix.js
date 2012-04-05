@@ -19,7 +19,7 @@
     index = 0;
     shift = 0;
     parser.addListener("startrule", function(event) {
-      var blacklisted, el, line, part, position, selector, _i, _j, _len, _len2, _ref, _ref2, _ref3, _ref4, _results;
+      var blacklisted, el, line, p, part, position, selector, _i, _j, _len, _len2, _ref, _ref2, _ref3, _ref4, _results;
       _ref = event.selectors;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -35,8 +35,14 @@
           if (_ref3 = (_ref4 = part.elementName) != null ? _ref4.text : void 0, __indexOf.call(blacklist, _ref3) >= 0) {
             blacklisted = true;
             el = part.elementName.text;
+            p = part.col - 1 + shift;
+            log(p, "33");
             log(["  before", line.join('')], "32");
-            line = line.slice(part.col - 1 + shift).join('').replace(new RegExp(el), text).split('');
+            if (p) {
+              line = line.slice(0, (p - 1) + 1 || 9e9).concat(line.slice(p).join('').replace(new RegExp(el), text).split(''));
+            } else {
+              line = line.join('').replace(new RegExp(el), text).split('');
+            }
             log(["  after ", line.join('')], "31");
           }
         }
