@@ -1,8 +1,7 @@
 parserlib = require "parserlib"
 
-exports.css = (input, text, blacklist=['html', 'body'], log=true) ->
-    # Add a space after the prefix text.
-    text = "#{text} "
+exports.css = (input, text, blacklist=['html', 'body']) ->
+    log '------------------------------'
 
     # Split on new lines.
     lines = input.split "\n"
@@ -16,38 +15,56 @@ exports.css = (input, text, blacklist=['html', 'body'], log=true) ->
     # Init parser.
     parser = new parserlib.css.Parser options
 
-    line = 0
+    index = 0
     shift = 0
 
     # Rule event.
     parser.addListener "startrule", (event) ->
         # Traverse all selectors.
         for selector in event.selectors
-            # Log.
-            console.log "[" + selector.line + ":" + selector.col + "] \033[0;1m" + selector + "\033[0m" if log
-
-            # Skip blacklisted selectors that cannot be prefixed.
-            if log
-                for part in selector.parts
-                    if part.elementName?.text in blacklist
-                        console.log "  \033[0;31mblacklisted \033[0;1m#{part.elementName.text}\033[0m"
+            log selector
             
-            s = ([selector.line, selector.col, part.elementName.text] for part in selector.parts when part.elementName?.text in blacklist)
-            if not s.length
-                # The same line as before?
-                if selector.line is line then shift += text.length else shift = 0
+            # Where are we? Be 0 indexed.
+            position = selector.col - 1
 
-                chars = lines[selector.line - 1].split('')
-                chars.splice(selector.col - 1 + shift, 0, text)
-                lines[selector.line - 1] = chars.join('')
+            # Make a char[] line.
+            line = lines[selector.line - 1].split('')
 
-                console.log "  \033[0;34mreplaced \033[0;1m#{selector}\033[0m" if log
+            # Reset line shift if this is a new line.
+            if selector.line isnt index then shift = 0
 
-                # Update the line.
-                line = selector.line
+            # Find blacklisted selectors.
+            blacklisted = false
+            for part in selector.parts
+                if part.elementName?.text in blacklist
+                    blacklisted = true
+                    el = part.elementName.text
+                    # Replace the selector with our own.
+                    log [ "  before", line.join('') ], "32"
+                    line = line[part.col - 1 + shift..].join('').replace(new RegExp(el), text).split('')
+                    log [ "  after ", line.join('') ], "31"
+
+            # Prefix with custom text.
+            if not blacklisted
+                log [ "  before", line.join('') ], "32"
+                line.splice(position + shift, 0, text + ' ')
+                log [ "  after ", line.join('') ], "31"
+                # Move the line shift.
+                shift += text.length + 1
+            
+            # Save the line back.
+            lines[selector.line - 1] = line.join('')
+
+            # Update the line.
+            index = selector.line
 
     # Parse.
     parser.parse input
 
     # Return on joined lines.
     lines.join "\n"
+
+# Console logging function.
+log = (text, color="1") ->
+    if text instanceof Array then text = text.join(' | ')
+    console.log "\033[0;#{color}m#{text}\033[0m"
