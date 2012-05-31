@@ -13,6 +13,6 @@ task "run", "prefix .css file selectors", (o) ->
     css = prefix.css fs.readFileSync(o.input, "utf-8"), o.prefix
 
     # Write the result.
-    fs.open o.output, 'w', 0666, (e, id) ->
+    fs.open o.output, 'w', 0o0666, (e, id) ->
         if e then throw new Error(e)
         fs.write id, css, null, "utf8"
