@@ -1,1 +1,0 @@
-clear ; coffee --compile prefix.coffee ; coffee --compile test/ ; mocha --ui bdd --reporter spec

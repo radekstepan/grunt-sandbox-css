@@ -1,18 +1,39 @@
-# Prefix CSS selectors in a file.
+# Prefix CSS selectors.
+
+Useful when loading say Twitter Bootstrap libraries for a widget on the page and we do not want to override the default style of that page.
 
 ## Requirements
 
-You can install all the dependencies by running `npm install -d`.
-
 - [parserlib](https://github.com/nzakas/parser-lib)
-- [CoffeeScript](http://coffeescript.org/) if you want to run from CLI.
 
-## Run
+```bash
+$ npm install -d
+```
 
-You can use the CoffeeScript CLI and run:
+## Use
 
-`cake --input "test.css" --prefix ".bootstrap" run`
+The library runs synchronously.
 
-## Mocha Testing
+```coffee-script
+prefix = require 'prefix-css-node'
 
-`npm install -d ; coffee --compile test/ ; mocha --ui bdd --reporter spec`
+css = """
+body { background:pink }
+a:after { content:"link", display:block }
+"""
+
+# To prefix each rule in the CSS file with the word `bootstrap`.
+prefix.css css, 'bootstrap'
+```
+
+By default, `html` and `body` selectors are blacklisted, to change that or pass custom selectors to exclude, pass a list as the third parameter:
+
+```coffee-script
+prefix.css css, 'bootstrap', [ 'html', 'body', 'a', '#div' ]
+```
+
+## Testing
+
+```bash
+$ npm test
+```

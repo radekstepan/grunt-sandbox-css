@@ -1,9 +1,32 @@
 {
-    "name": "css-prefix"
-  , "version": "0.0.1"
-  , "private": true
-  , "dependencies": {
-      "parserlib": "latest",
-      "should": "latest"
-  }
+    "name": "prefix-css-node",
+    "description": "Prefix CSS selectors to avoid library clashes",
+    "keywords": [
+        "css",
+        "prefix"
+    ],
+    "homepage": "http://github.com/radekstepan/prefix-css-node",
+    "bugs": {
+        "url": "http://github.com/radekstepan/prefix-css-node/issues",
+        "email": "dev@radekstepan.com"
+    },
+    "author": {
+        "name": "Radek Stepan",
+        "email": "dev@radekstepan.com",
+        "url": "http://radekstepan.com"
+    },
+    "version": "0.1.0",
+    "private": false,
+    "main": "./lib/prefix.js",
+    "dependencies": {
+        "parserlib": "latest"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/radekstepan/prefix-css-node.git"
+    },
+    "scripts": {
+        "pretest": "npm install mocha ; npm install should",
+        "test": "coffee --compile prefix.coffee ; coffee --compile test/ ; mocha --ui bdd --reporter spec"
+    }
 }

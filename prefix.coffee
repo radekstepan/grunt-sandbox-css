@@ -1,3 +1,5 @@
+#!/usr/bin/env coffee
+
 parserlib = require "parserlib"
 
 exports.css = (input, text, blacklist=['html', 'body']) ->
@@ -67,8 +69,3 @@ exports.css = (input, text, blacklist=['html', 'body']) ->
 
     # Return on joined lines.
     lines.join "\n"
-
-# Console logging function.
-log = (text, color="1") ->
-    if text instanceof Array then text = text.join(' | ')
-    console.log "\033[0;#{color}m#{text}\033[0m"
