@@ -22,15 +22,6 @@ body { background:pink }
 a:after { content:"link", display:block }
 """
 
-### File IO
-
-To input and output a file use the `cake` command:
-
-```bash
-$ cake --input in.css --output out.css --text gangnam prefix
-```
-
-# To prefix each rule in the CSS file with the word `bootstrap`.
 prefix.css css, 'bootstrap'
 ```
 
@@ -38,6 +29,14 @@ By default, `html` and `body` selectors are blacklisted, to change that or pass 
 
 ```coffee-script
 prefix.css css, 'bootstrap', [ 'html', 'body', 'a', '#div' ]
+```
+
+### File IO
+
+To input and output a file use the `cake` command:
+
+```bash
+$ cake --input in.css --output out.css --text gangnam prefix
 ```
 
 ## Testing
