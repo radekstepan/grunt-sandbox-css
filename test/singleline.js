@@ -18,9 +18,19 @@
         return result.should.equal(spec);
       });
     });
-    return describe("when run with a blacklist against a single-line input CSS", function() {
+    describe("when run with a blacklist against a single-line input CSS", function() {
       var result;
       result = prefix.css(input, '.bootstrap', ['html', 'body']);
+      return it("should replace all not-blacklisted selectors and replace blacklisted with prefixing selector", function() {
+        var spec;
+        spec = "/* a test CSS file */\n.bootstrap { ; }\n.bootstrap div, .bootstrap article { display:block; }\n.bootstrap.clazz { font-family:\"Helvetica;\"; }\n.bootstrap div.html, .bootstrap a, .bootstrap > div { text-decoration:underline; }";
+        return result.should.equal(spec);
+      });
+    });
+    return describe("when using a processor", function() {
+      var processor, result;
+      processor = prefix.prefixer('.bootstrap', ['html', 'body']);
+      result = processor(input);
       return it("should replace all not-blacklisted selectors and replace blacklisted with prefixing selector", function() {
         var spec;
         spec = "/* a test CSS file */\n.bootstrap { ; }\n.bootstrap div, .bootstrap article { display:block; }\n.bootstrap.clazz { font-family:\"Helvetica;\"; }\n.bootstrap div.html, .bootstrap a, .bootstrap > div { text-decoration:underline; }";
