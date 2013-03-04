@@ -1,32 +1,36 @@
 {
-    "name": "prefix-css-node",
-    "description": "Prefix CSS selectors to avoid library clashes",
-    "keywords": [
-        "css",
-        "prefix"
-    ],
-    "homepage": "http://github.com/radekstepan/prefix-css-node",
-    "bugs": {
-        "url": "http://github.com/radekstepan/prefix-css-node/issues",
-        "email": "dev@radekstepan.com"
-    },
-    "author": {
-        "name": "Radek Stepan",
-        "email": "dev@radekstepan.com",
-        "url": "http://radekstepan.com"
-    },
-    "version": "0.2.0",
-    "private": false,
-    "main": "./lib/prefix.js",
-    "dependencies": {
-        "parserlib": "latest"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git://github.com/radekstepan/prefix-css-node.git"
-    },
-    "scripts": {
-        "pretest": "npm install mocha ; npm install should",
-        "test": "coffee --compile prefix.coffee ; coffee --compile test/ ; mocha --ui bdd --reporter spec"
-    }
+  "name": "prefix-css-node",
+  "description": "Prefix CSS selectors to avoid library clashes",
+  "keywords": [
+    "css",
+    "prefix"
+  ],
+  "homepage": "http://github.com/radekstepan/prefix-css-node",
+  "bugs": {
+    "url": "http://github.com/radekstepan/prefix-css-node/issues",
+    "email": "dev@radekstepan.com"
+  },
+  "author": {
+    "name": "Radek Stepan",
+    "email": "dev@radekstepan.com",
+    "url": "http://radekstepan.com"
+  },
+  "version": "0.3.0",
+  "private": false,
+  "main": "./lib/prefix.js",
+  "dependencies": {
+    "parserlib": "latest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/radekstepan/prefix-css-node.git"
+  },
+  "scripts": {
+    "pretest": "npm install",
+    "test": "coffee --compile prefix.coffee ; coffee --compile test/ ; mocha --ui bdd --reporter spec"
+  },
+  "devDependencies": {
+    "should": "~1.2.2",
+    "mocha": "~1.8.1"
+  }
 }
