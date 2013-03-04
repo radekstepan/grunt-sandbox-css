@@ -108,7 +108,15 @@ exports.css = css = (input, text, blacklist=['html', 'body']) ->
 
     parser.addListener 'startkeyframes', (event) ->
       nlIfNeeded event
-      output.push "@#{ event.prefix }keyframes #{ event.name } {"
+      vendorPref = if event.prefix then "-#{ event.prefix }-" else ''
+      output.push "@#{ vendorPref }keyframes #{ event.name } {"
+
+    parser.addListener 'startkeyframerule', (event) ->
+      onNewLine = nlIfNeeded event
+      offset = event.col
+      indent = if onNewLine then new Array(offset).join(' ') else ' '
+      output.push "#{indent}#{event.keys.join(' ')} {"
+    
 
     parser.addListener 'startrule', (event) ->
       nlIfNeeded event
@@ -126,6 +134,7 @@ exports.css = css = (input, text, blacklist=['html', 'body']) ->
     parser.addListener 'endpage', closeBrace
     parser.addListener 'endfontface', closeBrace
     parser.addListener 'endrule', closeBrace
+    parser.addListener 'endkeyframerule', closeBrace
 
     parser.addListener 'property', (event) ->
       onNewLine = nlIfNeeded event
