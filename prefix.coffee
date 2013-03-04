@@ -2,73 +2,153 @@
 
 parserlib = require "parserlib"
 
-exports.css = css = (input, text, blacklist=['html', 'body']) ->
-    # Split on new lines.
-    lines = input.split "\n"
+any = (xs, f) ->
+  for x in xs
+    if f x
+      return true
+  return false
 
-    options =
-        starHack: true
-        ieFilters: true
-        underscoreHack: true
-        strict: false
+options =
+    starHack: true
+    ieFilters: true
+    underscoreHack: true
+    strict: false
+
+combToText = (combinator) ->
+  if combinator.text is ' ' then combinator.text else " #{ combinator } "
+
+prefix = (pref, blacklist) -> (selector) ->
+  output = []
+  watchForFollowingElems = false
+  hangoverCombinator = null
+  for part, idx in selector.parts
+    if part.elementName? and watchForFollowingElems and part.elementName.text in blacklist
+      hangoverCombinator = null
+    else if watchForFollowingElems and part instanceof parserlib.css.Combinator
+      if part.type in ['descendant', 'child']
+        hangoverCombinator = part
+      else
+        output.push part.text
+        watchForFollowingElems = false
+    else if idx > 0 # Only need to look at the first part.
+      if hangoverCombinator?
+        output.push combToText hangoverCombinator
+        hangoverCombinator = null
+
+      text = if part instanceof parserlib.css.Combinator
+        combToText part
+      else
+        part.text
+      output.push text
+      watchForFollowingElems = false
+    else
+      {elementName, modifiers} = part
+      ms = modifiers
+      if elementName?.text in blacklist
+        re = new RegExp(elementName.text, 'g')
+        output.push part.text.replace re, pref
+        watchForFollowingElems = true
+      else if (elementName is null) and ms.length and (any ms, (m) -> m.text in blacklist)
+        output.push part.text
+      else
+        output.push "#{ pref } #{ part }"
+          
+  output.join('')
+
+exports.css = css = (input, text, blacklist=['html', 'body']) ->
+
+    output = []
 
     # Init parser.
     parser = new parserlib.css.Parser options
 
-    index = 0
-    shift = 0
+    process = prefix text, blacklist
 
-    # Rule event.
-    parser.addListener "startrule", (event) ->
-        # Traverse all selectors.
-        for selector in event.selectors
-            # Where are we? Be 0 indexed.
-            position = selector.col - 1
+    ruleLine = 0
+    lastLine = 1
 
-            # Make a char[] line.
-            line = lines[selector.line - 1].split('')
+    nlIfNeeded = (event) ->
+      current = event.line
+      newLine = current > lastLine
+      output.push '\n' if newLine
+      lastLine = current
+      newLine
 
-            # Reset line shift if this is a new line.
-            if selector.line isnt index then shift = 0
+    closeBrace = (event) ->
+      nlIfNeeded event
+      output.push "}"
 
-            # Find blacklisted selectors.
-            blacklisted = false
-            for part in selector.parts
-                if part.elementName?.text in blacklist
-                    blacklisted = true
-                    el = part.elementName.text
-                    p = part.col - 1 + shift
+    parser.addListener 'charset', (event) ->
+      lastLine = event.line
+      output.push "@charset #{ event.charset };"
 
-                    # Replace the selector with our own.
-                    if p
-                        # In the middle of the line?
-                        line = line[0..p - 1].concat line[p..].join('').replace(new RegExp(el), text).split('')
-                    else
-                        line = line.join('').replace(new RegExp(el), text).split('')
+    parser.addListener 'namespace', (event) ->
+      nlIfNeeded event
+      output.push "@namespace #{ event.prefix } #{ event.uri };"
 
-            # Prefix with custom text.
-            if not blacklisted
-                line.splice(position + shift, 0, text + ' ')
-                # Move the line shift.
-                shift += text.length + 1
-            
-            # Join up.
-            line = line.join('')
+    parser.addListener 'import', (event) ->
+      nlIfNeeded event
+      output.push "@import #{ event.uri } #{ event.media.join(',') };"
 
-            # Check for `prefix` > `prefix` rules having replace 2 blacklisted rules.
-            line = line.replace(new RegExp(text + " *\> *" + text), text)
+    parser.addListener 'startfontface', ->
+      nlIfNeeded event
+      output.push "@fontface {"
 
-            # Save the line back.
-            lines[selector.line - 1] = line
+    parser.addListener 'startpage', (event) ->
+      nlIfNeeded event
+      output.push "@page #{ event.pseudo ? '' } {"
 
-            # Update the line.
-            index = selector.line
+    parser.addListener 'startpagemargin', (event) ->
+      nlIfNeeded event
+      output.push "@#{ event.margin } {"
+
+    parser.addListener 'startmedia', (event) ->
+      nlIfNeeded event
+      output.push "@media #{ event.media.join(',') } {"
+
+    parser.addListener 'startkeyframes', (event) ->
+      nlIfNeeded event
+      vendorPref = if event.prefix then "-#{ event.prefix }-" else ''
+      output.push "@#{ vendorPref }keyframes #{ event.name } {"
+
+    parser.addListener 'startkeyframerule', (event) ->
+      onNewLine = nlIfNeeded event
+      offset = event.col
+      indent = if onNewLine then new Array(offset).join(' ') else ' '
+      output.push "#{indent}#{event.keys.join(' ')} {"
+    
+
+    parser.addListener 'startrule', (event) ->
+      nlIfNeeded event
+      selectors = event.selectors.slice()
+      prefixed = selectors.map process
+      startLine = selectors[0].line
+      lastLine = ruleLine = selectors[selectors.length - 1].line
+      delim = if startLine is ruleLine then ' ' else '\n'
+      output.push prefixed.join(',' + delim)
+      output.push ' {'
+
+    parser.addListener 'endmedia', closeBrace
+    parser.addListener 'endkeyframes', closeBrace
+    parser.addListener 'endpagemargin', closeBrace
+    parser.addListener 'endpage', closeBrace
+    parser.addListener 'endfontface', closeBrace
+    parser.addListener 'endrule', closeBrace
+    parser.addListener 'endkeyframerule', closeBrace
+
+    parser.addListener 'property', (event) ->
+      onNewLine = nlIfNeeded event
+      {property, value, important} = event
+      offset = property.col
+      indent = if onNewLine then new Array(offset).join(' ') else ''
+      importance = if important then '!important' else ''
+      delim = if offset + property.text.length + 1 is value.col then '' else ' '
+      output.push "#{indent}#{ event.property }:#{ delim }#{ event.value }#{ importance };"
 
     # Parse.
     parser.parse input
 
-    # Return on joined lines.
-    lines.join "\n"
+    output.join ''
 
 # Produce a function with its prefix and blacklist preset.
 exports.prefixer = (text, blacklist) -> (input) -> css input, text, blacklist
