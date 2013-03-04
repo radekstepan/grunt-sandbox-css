@@ -2,6 +2,12 @@
 
 parserlib = require "parserlib"
 
+any = (xs, f) ->
+  for x in xs
+    if f x
+      return true
+  return false
+
 options =
     starHack: true
     ieFilters: true
@@ -37,11 +43,12 @@ prefix = (pref, blacklist) -> (selector) ->
       watchForFollowingElems = false
     else
       {elementName, modifiers} = part
+      ms = modifiers
       if elementName?.text in blacklist
         re = new RegExp(elementName.text, 'g')
         output.push part.text.replace re, pref
         watchForFollowingElems = true
-      else if (elementName is null) and (modifiers.length is 1) and (modifiers[0].text in blacklist)
+      else if (elementName is null) and ms.length and (any ms, (m) -> m.text in blacklist)
         output.push part.text
       else
         output.push "#{ pref } #{ part }"

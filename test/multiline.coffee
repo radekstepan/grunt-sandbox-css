@@ -6,6 +6,7 @@ input =
 html { ; }
 div,
 .foo bar.baz > quux #zump,
+.foo.buzz cruz,
 article {
   display:block;
   border: 1px solid gold;
@@ -26,6 +27,7 @@ describe "Multi-line test", ->
           '.bootstrap html {}',
           '.bootstrap div,',
           '.bootstrap .foo bar.baz > quux #zump,',
+          '.bootstrap .foo.buzz cruz,',
           '.bootstrap article {',
           '  display:block;',
           '  border: 1px solid gold;}',
@@ -47,6 +49,7 @@ describe "Multi-line test", ->
         .bootstrap {}
         .bootstrap div,
         .foo bar.baz > quux #zump,
+        .foo.buzz cruz,
         .bootstrap article {
           display:block;
           border: 1px solid gold;}
