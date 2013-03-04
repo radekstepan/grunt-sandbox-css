@@ -3,10 +3,13 @@ prefix = require "../prefix"
 
 input =
 """
-/* a test CSS file */
 html { ; }
 div,
-article { display:block; }
+.foo bar.baz > quux #zump,
+article {
+  display:block;
+  border: 1px solid gold;
+}
 body.clazz { font-family:"Helvetica;"; }
 div.html,
 a,
@@ -19,35 +22,38 @@ describe "Multi-line test", ->
     result = prefix.css input, '.bootstrap', []
 
     it "should replace all selectors", ->
-        spec =
-        """
-        /* a test CSS file */
-        .bootstrap html { ; }
-        .bootstrap div,
-        .bootstrap article { display:block; }
-        .bootstrap body.clazz { font-family:"Helvetica;"; }
-        .bootstrap div.html,
-        .bootstrap a,
-        .bootstrap html > div { text-decoration:underline; }
-        """
+        spec = [
+          '.bootstrap html {}',
+          '.bootstrap div,',
+          '.bootstrap .foo bar.baz > quux #zump,',
+          '.bootstrap article {',
+          '  display:block;',
+          '  border: 1px solid gold;}',
+          '.bootstrap body.clazz {font-family:"Helvetica;";}',
+          '.bootstrap div.html,',
+          '.bootstrap a,',
+          '.bootstrap html > div {text-decoration:underline;}',
+        ]
 
-        result.should.equal spec
+        result.should.equal spec.join('\n')
 
   describe "when run with a blacklist against a multi-line input CSS", ->
 
-    result = prefix.css input, '.bootstrap', [ 'html', 'body' ]
+    result = prefix.css input, '.bootstrap', [ 'html', 'body', '.foo' ]
 
     it "should replace all not-blacklisted selectors and replace blacklisted with prefixing selector", ->
         spec =
         """
-        /* a test CSS file */
-        .bootstrap { ; }
+        .bootstrap {}
         .bootstrap div,
-        .bootstrap article { display:block; }
-        .bootstrap.clazz { font-family:"Helvetica;"; }
+        .foo bar.baz > quux #zump,
+        .bootstrap article {
+          display:block;
+          border: 1px solid gold;}
+        .bootstrap.clazz {font-family:"Helvetica;";}
         .bootstrap div.html,
         .bootstrap a,
-        .bootstrap > div { text-decoration:underline; }
+        .bootstrap > div {text-decoration:underline;}
         """
 
         result.should.equal spec

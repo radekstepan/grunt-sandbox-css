@@ -7,11 +7,11 @@ describe "Multiple selector part replace", ->
     result = prefix.css 'html > body { ; }', 'bootstrap'
 
     it "should replace the whole selector with the prefix", ->
-        result.should.equal 'bootstrap { ; }'
+        result.should.equal 'bootstrap {}'
 
   describe "when run with blacklist > blacklist selector (with a dot in selector)", ->
 
     result = prefix.css 'html > body { ; }', '.bootstrap'
 
     it "should replace the whole selector with the prefix", ->
-        result.should.equal '.bootstrap { ; }'
+        result.should.equal '.bootstrap {}'
