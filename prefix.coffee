@@ -2,7 +2,7 @@
 
 parserlib = require "parserlib"
 
-exports.css = (input, text, blacklist=['html', 'body']) ->
+exports.css = css = (input, text, blacklist=['html', 'body']) ->
     # Split on new lines.
     lines = input.split "\n"
 
@@ -69,3 +69,6 @@ exports.css = (input, text, blacklist=['html', 'body']) ->
 
     # Return on joined lines.
     lines.join "\n"
+
+# Produce a function with its prefix and blacklist preset.
+exports.prefixer = (text, blacklist) -> (input) -> css input, text, blacklist
