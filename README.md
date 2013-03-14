@@ -1,4 +1,6 @@
-# Prefix CSS selectors.
+# Prefix CSS selectors
+
+[ ![Codeship Status for radekstepan/prefix-css-node](https://www.codeship.io/projects/73860060-6f11-0130-b089-22000a9d02dd/status?branch=master)](https://www.codeship.io/projects/1944)
 
 Useful when loading say Twitter Bootstrap libraries for a widget on the page and we do not want to override the default style of that page.
 
