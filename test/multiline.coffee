@@ -1,5 +1,5 @@
 should = require "should"
-prefix = require "../prefix"
+prefix = require "../tasks/lib.coffee"
 
 input =
 """

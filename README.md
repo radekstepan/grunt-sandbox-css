@@ -1,48 +1,29 @@
-# Prefix CSS selectors
+#grunt-sandbox-css [![Built with Grunt](https://cdn.gruntjs.com/builtwith.png)](http://gruntjs.com/)
 
-[ ![Codeship Status for radekstepan/prefix-css-node](https://www.codeship.io/projects/73860060-6f11-0130-b089-22000a9d02dd/status?branch=master)](https://www.codeship.io/projects/1944)
+[ ![Codeship Status for radekstepan/grunt-sandbox-css](https://www.codeship.io/projects/73860060-6f11-0130-b089-22000a9d02dd/status?branch=master)](https://www.codeship.io/projects/1944)
 
-Useful when loading say Twitter Bootstrap libraries for a widget on the page and we do not want to override the default style of that page.
+Say you are loading a Foundation/Bootstrap library for a widet and don't want them affecting the rest of the page. This [Grunt](http://gruntjs.com) plugin will prefix all selectors in input CSS file with your custom one.
 
-## Requirements
+##Quick start
 
-- [parserlib](https://github.com/nzakas/parser-lib)
+Example `Gruntfile.coffee`:
 
-```bash
-$ npm install -d
-```
+```coffeescript
+module.exports = (grunt) ->
+    grunt.initConfig
+        pkg: grunt.file.readJSON "package.json"
+        
+        sandbox_css:
+            foundation:
+                files:
+                  'build/foundation.sandboxed.css': 'src/foundation.css'
+                options:
+                    # E.g.: .row -> .foundation .row
+                    prefix: '.foundation'
+                    # Selectors where we do not prefix.
+                    blacklist: [ 'html', 'body' ]
 
-## Use
+    grunt.loadNpmTasks('grunt-sandbox-css')
 
-The library runs synchronously.
-
-```coffee-script
-prefix = require 'prefix-css-node'
-
-css = """
-body { background:pink }
-a:after { content:"link", display:block }
-"""
-
-prefix.css css, 'bootstrap'
-```
-
-By default, `html` and `body` selectors are blacklisted, to change that or pass custom selectors to exclude, pass a list as the third parameter:
-
-```coffee-script
-prefix.css css, 'bootstrap', [ 'html', 'body', 'a', '#div' ]
-```
-
-### File IO
-
-To input and output a file use the `cake` command:
-
-```bash
-$ cake --input in.css --output out.css --text gangnam prefix
-```
-
-## Testing
-
-```bash
-$ npm test
+    grunt.registerTask('default', [ 'sandbox_css' ])
 ```

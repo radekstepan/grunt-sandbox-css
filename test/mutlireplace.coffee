@@ -1,5 +1,5 @@
 should = require "should"
-prefix = require "../prefix"
+prefix = require "../tasks/lib.coffee"
 
 describe "Multiple selector part replace", ->
   describe "when run with blacklist > blacklist selector (without a dot in selector)", ->
