@@ -90,9 +90,9 @@ exports.css = css = (input, text, blacklist=['html', 'body']) ->
       nlIfNeeded event
       output.push "@import #{ event.uri } #{ event.media.join(',') };"
 
-    parser.addListener 'startfontface', ->
+    parser.addListener 'startfontface', (event) ->
       nlIfNeeded event
-      output.push "@fontface {"
+      output.push "@font-face {"
 
     parser.addListener 'startpage', (event) ->
       nlIfNeeded event
