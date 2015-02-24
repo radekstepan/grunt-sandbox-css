@@ -10,19 +10,19 @@
     "bootstrap"
   ],
   "author": "Radek <dev@radekstepan.com>",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "dependencies": {
     "async": "^0.9.0",
     "coffee-script": ">=1.8.0",
-    "colors": "^1.0.2",
+    "colors": "^1.0.3",
     "parserlib": "^0.2.5"
   },
   "devDependencies": {
-    "mocha": "~1.8.1",
-    "should": "^4.0.4"
+    "mocha": "^2.1.0",
+    "should": "^5.0.1"
   },
   "peerDependencies": {
-    "grunt": "~0.4.2"
+    "grunt": "~0.4.5"
   },
   "main": "Gruntfile.coffee",
   "repository": {
