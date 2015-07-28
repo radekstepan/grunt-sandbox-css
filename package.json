@@ -10,7 +10,7 @@
     "bootstrap"
   ],
   "author": "Radek <dev@radekstepan.com>",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "dependencies": {
     "async": "^0.9.0",
     "coffee-script": ">=1.8.0",
@@ -27,7 +27,7 @@
   "main": "Gruntfile.coffee",
   "repository": {
     "type": "git",
-    "url": "git@github.com:radekstepan/grunt-sanbox-css.git"
+    "url": "git@github.com:radekstepan/grunt-sandbox-css.git"
   },
   "scripts": {
     "test": "./node_modules/.bin/mocha --compilers coffee:coffee-script/register --reporter spec --ui exports --bail --slow 200"
